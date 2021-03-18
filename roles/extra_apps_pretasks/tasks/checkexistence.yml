@@ -1,0 +1,21 @@
+---
+
+- name: check existence of extra apps via product_id
+  win_shell: |
+    $path = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{{ item.value.product_id }}'
+    Test-Path $path
+  vars:
+    loopitem: "{{ item.value }}"
+  with_dict:
+    - "{{ software }}"
+  when: 'item.key in apps and item.value.extra is defined'
+  register: dirs
+
+- name: set exists to FALSE if registry key not found
+  set_fact:
+    software: "{{ software | combine(new_item, recursive=true) }}"
+  vars: 
+    new_item: "{ '{{ item.item.key }}': { 'exists': '{{ item.stdout_lines[0] }}' } }" 
+  loop: "{{ dirs.results }}"
+  when: "'stdout' in item"
+

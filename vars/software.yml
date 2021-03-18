@@ -1,0 +1,23 @@
+---
+
+software:		
+  Firefox:	
+    alias: Firefox 	
+    displayname: Firefox 
+    installer: 'firefox.msi' 
+    filepath: 'C:\Program Files\Mozilla Firefox\firefox.exe'
+    provider: msi
+    product_id: 'Mozilla Firefox 85.0 (x64 de)'
+    sourcepath: software/firefox.msi
+    state: present
+    extra: TRUE
+    exists: FALSE 
+  Notepad:
+    alias: Notepad 
+    displayname: Notepad
+    filepath: 'C:\Windows\system32\notepad.exe'
+  Calculator:
+    alias: Calc
+    displayname: Calc
+    filepath: 'C:\Windows\system32\win32calc.exe'
+

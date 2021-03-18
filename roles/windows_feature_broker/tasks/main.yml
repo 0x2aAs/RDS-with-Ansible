@@ -1,0 +1,15 @@
+---
+
+- name: install RDS feature connectionbroker
+  ansible.windows.win_feature:
+    name: 
+    - RDS-CONNECTION-BROKER
+    state: present
+    include_sub_features: yes
+    include_management_tools: yes
+  register: winfeature
+
+- name: reboot if required
+  ansible.windows.win_reboot:
+  when: winfeature.reboot_required 
+

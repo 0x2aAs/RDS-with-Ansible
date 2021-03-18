@@ -1,0 +1,18 @@
+---
+
+# servers need to be placed in inventory file with appropriate group
+connectionbroker: "{{ groups.connectionbroker[0] }}"
+sessionhost: "{{ groups.sessionhost[0] }}"
+webaccess: "{{ groups.webaccess[0] }}"
+
+# vars used in roles/deploy_rds_single and roles/deploy_rds_multi
+ad_group: "RDP-Users"
+collection_name: "Test-Collection"
+collection_description: "Choose a collection description"
+
+# remote apps for RDS, see file vars/software.yml
+apps:
+  - Notepad
+  - Calculator
+  - Firefox
+

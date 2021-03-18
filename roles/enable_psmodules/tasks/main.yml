@@ -1,0 +1,11 @@
+---
+
+- name: Add RemoteDesktop PS module
+  community.windows.win_psmodule:
+    name: RemoteDesktop
+    state: present
+
+- name: Add xRemoteDesktopSessionHost DSC module
+  community.windows.win_psmodule:
+    name: xRemoteDesktopSessionHost
+    state: present

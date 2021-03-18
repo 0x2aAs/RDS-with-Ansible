@@ -1,0 +1,51 @@
+Preparation on Windows server:
+
+- join domain
+- add Active Directory user (Ansible user) to local administrator group
+- for testing purposes WinRM is set to allow unencrypted
+
+	winrm set winrm/config/service @{AllowUnencrypted="true"}
+
+
+Preparation on Ansible host (Single-Server, all RDS features on a single server):
+
+- put FQDN of target server under group [singleserver] in inventory file
+- remaining configuration via vars/single.yml:
+  - choose AD group
+  - choose collection name and description
+  - choose remote apps
+
+Run playbook: ansible-playbook single_rds.yml -vvvv
+
+
+Preparation on Ansible host (Multi-Server, RDS features deployed on different servers):
+
+The Dsc parameters 'PsDscRunAsCredential_username' and 'PsDscRunAsCredential_password' are needed. 
+Otherwise it will give an error, because it can't connect via PowerShell remoting.
+
+- add connectionbroker FQDN to inventory file beneath [connectionbroker] 
+- add sessionhost FQDN to group [sessionhost] 
+- add webaccess FQDN to group [webaccess] 
+- add your AD credentials to group_vars/all.yml by:
+  - echo "username: username@EXAMPLE.COM" >> group_vars/all.yml
+  - ansible-vault encrypt_string 'Pa$$w0rd' --name 'password' >> group_vars/all.yml
+- remaining configuration via vars/single.yml:
+  - choose AD group
+  - choose collection name and description
+  - choose remote apps
+
+run playbook: ansible-playbook multi_rds.yml --ask-vault-pass -vvvv
+
+
+
+
+Information on deploying software and remote apps:
+
+The file vars/software.yml needs to be filled manually. 
+Then roles/extra_apps_pretasks/tasks/main.yml will create dir, copy installer and install software.
+To prevent unnecessary copying roles/extra_apps_pretasks/tasks/checkexistence.yml will check,
+if the software has already been installed by reading product id from registry. If it is already installed
+it will set the field exists to TRUE in vars/software.yml
+The field extra in vars/software.yml is to indicate that it comes with an installer and is no Windows utility like Calculator or Notepad.
+
+

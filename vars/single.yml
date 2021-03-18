@@ -1,0 +1,16 @@
+---
+
+# server name will be ansible_fqdn unless changed here
+servername: "{{ ansible_fqdn }}"
+
+# vars used in roles/deploy_rds_single and roles/deploy_rds_multi
+ad_group: "RDP-Users"
+collection_name: "Test-Collection"
+collection_description: "Choose a collection description"
+
+# remote apps for RDS, see file vars/software.yml
+apps:
+  - Notepad
+  - Calculator
+  - Firefox
+

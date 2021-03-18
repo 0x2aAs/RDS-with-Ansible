@@ -1,0 +1,14 @@
+---
+
+- name: deploy RDS on a single server
+  hosts: singleserver
+  gather_facts: true
+  vars_files:
+    - vars/software.yml
+    - vars/single.yml
+  roles:
+    - enable_psmodules
+    - enable_windows_features
+    - deploy_rds_single
+    - extra_apps_pretasks
+    - publish_apps_single

@@ -1,0 +1,12 @@
+---
+
+- name: cleanup folders
+  ansible.windows.win_file:
+    path: "{{ ansible_env.SystemDrive }}\\{{ item.key }}"
+    state: absent
+  vars:
+    loopitem: "{{ item.value }}"
+  with_dict:
+    - "{{ software }}"
+  when: 'item.key in apps and item.value.extra is defined'
+

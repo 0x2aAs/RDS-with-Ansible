@@ -1,0 +1,12 @@
+[singleserver]
+server-1.EXAMPLE.COM	
+server-2.EXAMPLE.COM
+
+[sessionhost]
+server-1.EXAMPLE.COM
+
+[connectionbroker]
+server-2.EXAMPLE.COM
+
+[webaccess]
+server-3.EXAMPLE.COM

@@ -1,0 +1,17 @@
+---
+
+- name: Add RDS remote apps
+  ansible.windows.win_dsc:
+    resource_name: xRDRemoteApp
+    CollectionName: "{{ collection_name }}"
+    Alias: "{{ item.value.alias }}"
+    DisplayName: "{{ item.value.displayname }}" 
+    FilePath: "{{ item.value.filepath }}"
+    PsDscRunAsCredential_username: "{{ username }}"
+    PsDscRunAsCredential_password: "{{ password }}"
+  vars:
+    loopitem: "{{ item.value }}"
+  with_dict:
+    - "{{ software }}"
+  when: 'item.key in apps'
+  ignore_errors: yes

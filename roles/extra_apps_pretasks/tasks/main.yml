@@ -1,0 +1,41 @@
+---
+
+- name: check registry
+  include: checkexistence.yml
+
+- name: create folders for non standard software
+  ansible.windows.win_file:
+    path: "{{ ansible_env.SystemDrive }}\\{{ item.key }}"
+    state: directory
+  vars:
+    loopitem: "{{ item.value }}"
+  with_dict:
+    - "{{ software }}"
+  when: 'item.key in apps and item.value.extra is defined and item.value.exists|upper == "FALSE"'
+  ignore_errors: yes
+  notify: 
+    - cleanup folders
+
+- name: copy installer
+  ansible.windows.win_copy:
+    src: "{{ item.value.sourcepath }}"
+    dest: "{{ ansible_env.SystemDrive }}\\{{ item.key }}"
+  vars:
+    loopitem: "{{ item.value }}"
+  with_dict:
+    - "{{ software }}"
+  when: 'item.key in apps and item.value.extra is defined and item.value.exists|upper == "FALSE"'
+  ignore_errors: yes
+
+- name: install extra software
+  win_package:
+    path: "{{ ansible_env.SystemDrive }}\\{{ item.key }}\\{{ item.value.installer }}"
+    provider: auto
+    state: present
+    product_id: "{{ item.value.product_id }}"
+  vars:
+    loopitem: "{{ item.value }}"
+  with_dict:
+    - "{{ software }}"
+  when: 'item.key in apps and item.value.extra is defined and item.value.exists|upper == "FALSE"'
+  ignore_errors: yes

@@ -1,0 +1,51 @@
+---
+
+- name: '1. import PS modules'
+  hosts: all
+  gather_facts: true
+  roles:
+    - enable_psmodules
+
+- name: '2.1 install RDS-WEB-ACCESS feature'
+  hosts: webaccess
+  gather_facts: false
+  roles:
+    - windows_feature_webaccess
+
+- name: '2.2 install RDS-RD-SERVER feature'
+  hosts: sessionhost
+  gather_facts: false
+  roles:
+    - windows_feature_sessionhost
+
+- name: '2.3 install RDS-CONNECTION-BROKER feature'
+  hosts: connectionbroker
+  gather_facts: false
+  roles:
+    - windows_feature_broker
+
+- name: '3. deploy RDS, collection and conf'
+  hosts: connectionbroker
+  gather_facts: false
+  vars_files:
+    - vars/multi.yml
+  roles:
+    - deploy_rds_multi
+
+- name: '4. extra apps pre tasks'
+  hosts: sessionhost
+  gather_facts: false
+  vars_files:
+    - vars/software.yml
+    - vars/multi.yml
+  roles:
+    - extra_apps_pretasks
+
+- name: '5. publish all remote apps'
+  hosts: connectionbroker
+  gather_facts: false
+  vars_files:
+    - vars/software.yml
+    - vars/multi.yml
+  roles:
+    - publish_apps_multi

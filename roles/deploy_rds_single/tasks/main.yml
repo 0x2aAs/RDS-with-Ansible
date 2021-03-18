@@ -1,0 +1,29 @@
+---
+
+- name: Add RDS deployment
+  ansible.windows.win_dsc:
+    resource_name: xRDSessionDeployment
+    ConnectionBroker: "{{ servername }}"
+    SessionHost: "{{ servername  }}"
+    WebAccessServer:  "{{ servername }}"
+
+- name: Add RDS collection
+  ansible.windows.win_dsc:
+    resource_name: xRDSessionCollection
+    CollectionName: "{{ collection_name }}"
+    CollectionDescription: "{{ collection_description }}"
+    ConnectionBroker: "{{ servername }}"
+    SessionHost: "{{ servername }}"
+
+- name: Add RDS collection configuration
+  ansible.windows.win_dsc:
+    resource_name: xRDSessionCollectionConfiguration
+    CollectionName: "{{ collection_name }}"
+    ActiveSessionLimitMin: 60
+    AuthenticateUsingNLA: false
+    AutomaticReconnectionEnabled: true
+    BrokenConnectionAction: 'Disconnect'
+    ConnectionBroker: "{{ servername }}"
+    DisconnectedSessionLimitMin: 240
+    IdleSessionLimitMin: 45
+    UserGroup: "{{ ad_group }}"
