@@ -8,6 +8,7 @@ Preparation on Windows server:
 
 	winrm set winrm/config/service @{AllowUnencrypted="true"}
 
+#################################################################################
 
 Preparation on Ansible host (Single-Server, all RDS features on a single server):
 
@@ -15,10 +16,11 @@ Preparation on Ansible host (Single-Server, all RDS features on a single server)
 - remaining configuration via vars/single.yml:
   - choose AD group
   - choose collection name and description
-  - choose remote apps
+  - choose remote apps (see below)
 
 Run playbook: ansible-playbook single_rds.yml -vvvv
 
+#################################################################################
 
 Preparation on Ansible host (Multi-Server, RDS features deployed on different servers):
 
@@ -34,20 +36,25 @@ Otherwise it will give an error, because it can't connect via PowerShell remotin
 - remaining configuration via vars/single.yml:
   - choose AD group
   - choose collection name and description
-  - choose remote apps
+  - choose remote apps (see below)
 
 run playbook: ansible-playbook multi_rds.yml --ask-vault-pass -vvvv
 
+#################################################################################
 
-
-
-Information on deploying software and remote apps:
+Information on installing software and publish them as remote apps:
 
 The file vars/software.yml needs to be filled manually. 
-Then roles/extra_apps_pretasks/tasks/main.yml will create dir, copy installer and install software.
+The field extra in vars/software.yml is to indicate that it comes with an installer and is no
+Windows utility like Calculator or Notepad.
+The field exists in vars/software.yml holds the apps current installation status: 
+exists: TRUE = software already installed
+exists: FALSE = software has not been installed
+
 To prevent unnecessary copying roles/extra_apps_pretasks/tasks/checkexistence.yml will check,
-if the software has already been installed by reading product id from registry. If it is already installed
-it will set the field exists to TRUE in vars/software.yml
-The field extra in vars/software.yml is to indicate that it comes with an installer and is no Windows utility like Calculator or Notepad.
-
-
+if the software has already been installed. This is done by looking up the product_id 
+within HKLM:.../Uninstall/product_id. 
+If the product_id was found Ansible will not create a directory, thus not copy and install software. 
+Then roles/extra_apps_pretasks/tasks/main.yml will create dir, copy installer and install software.
+by reading product id from registry. If it is already installed it will set the field exists 
+to TRUE in vars/software.yml
